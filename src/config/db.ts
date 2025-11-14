@@ -1,9 +1,14 @@
 import mongoose from "mongoose";
 
 const connectDB = async () => {
-  const mongoURI = process.env.MONGO_URI || "mongodb://mongo:27017/medicine_db";
+  const mongoURI = process.env.MONGODB_URI;
 
-  let retries = 5; // Retry 5 times
+  if (!mongoURI) {
+    console.error("❌ MONGODB_URI environment variable is missing");
+    process.exit(1);
+  }
+
+  let retries = 5;
   while (retries) {
     try {
       await mongoose.connect(mongoURI);
@@ -13,7 +18,7 @@ const connectDB = async () => {
       console.error("MongoDB connection error:", err);
       retries -= 1;
       console.log(`🔁 Retrying connection... attempts left: ${retries}`);
-      await new Promise(res => setTimeout(res, 5000)); // wait 5 seconds before retry
+      await new Promise(res => setTimeout(res, 5000));
     }
   }
 
