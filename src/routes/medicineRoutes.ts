@@ -1,5 +1,11 @@
 import express from "express";
-import {createMedicine, getMedicines, updateMedicine, deleteMedicine,} from "../controllers/medicineController";
+import {
+  createMedicine,
+  getMedicines,
+  updateMedicine,
+  deleteMedicine,
+  getHistory
+} from "../controllers/medicineController";
 
 const router = express.Router();
 
@@ -18,5 +24,8 @@ router.put("/:id", updateMedicine);
 
 // Delete medicine by ID
 router.delete("/:id", deleteMedicine);
+
+// Get medicine history
+router.get("/history", getHistory);
 
 export default router;
