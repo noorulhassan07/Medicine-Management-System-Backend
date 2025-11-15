@@ -5,6 +5,8 @@ import morgan from 'morgan';
 import connectDB from './config/db';
 import medicineRoutes from './routes/medicineRoutes';
 import saleRoutes from './routes/saleRoutes';  // This import exists but not used
+import historyRoutes from "./routes/history";
+
 
 dotenv.config();
 
@@ -19,7 +21,7 @@ app.use(morgan('dev'));
 // Routes
 app.use('/api/medicines', medicineRoutes);
 app.use('/api/sales', saleRoutes); // ADD THIS LINE - THIS IS MISSING!
-
+app.use("/api/medicines/history", historyRoutes);
 // Health check endpoint
 app.get('/api/health', (req, res) => {
   res.json({ 
