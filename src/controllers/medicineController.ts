@@ -98,3 +98,16 @@ export const getHistory = async (req: Request, res: Response) => {
     res.status(500).json({ error: "Failed to fetch history" });
   }
 };
+
+// Get single medicine by ID
+export const getMedicineById = async (req: Request, res: Response) => {
+  try {
+    const medicine = await Medicine.findById(req.params.id);
+    if (!medicine) {
+      return res.status(404).json({ error: "Medicine not found" });
+    }
+    res.json(medicine);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch medicine" });
+  }
+};
