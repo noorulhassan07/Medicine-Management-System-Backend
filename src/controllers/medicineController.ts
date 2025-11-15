@@ -18,13 +18,13 @@ export const createMedicine = async (req: Request, res: Response) => {
     const medicine = new Medicine(req.body);
     await medicine.save();
     
-    // Log to history - FIXED: Access properties directly from medicine object
+    // Log to history
     await MedicineHistory.create({
       medicineId: medicine._id,
-      medicineName: medicine.name, // Access directly from medicine
+      medicineName: req.body.name, // Use from request body
       action: 'created',
-      details: `Added ${medicine.name} to inventory (Qty: ${medicine.quantity}, Price: ${medicine.price} PKR)`,
-      newData: medicine.toObject() // Use toObject() to get plain JavaScript object
+      details: `Added ${req.body.name} to inventory (Qty: ${req.body.quantity}, Price: ${req.body.price} PKR)`,
+      newData: req.body
     });
     
     res.status(201).json(medicine);
@@ -46,13 +46,13 @@ export const updateMedicine = async (req: Request, res: Response) => {
       return res.status(404).json({ error: "Medicine not found" });
     }
     
-    // Log to history - FIXED: Access properties directly
+    // Log to history
     await MedicineHistory.create({
       medicineId: medicine._id,
-      medicineName: medicine.name, // Access directly from medicine
+      medicineName: req.body.name || medicine.name, // Use from request or existing
       action: 'updated',
-      details: `Updated ${medicine.name}`,
-      newData: medicine.toObject() // Use toObject()
+      details: `Updated medicine details`,
+      newData: req.body
     });
     
     res.json(medicine);
@@ -70,13 +70,16 @@ export const deleteMedicine = async (req: Request, res: Response) => {
       return res.status(404).json({ error: "Medicine not found" });
     }
     
-    // Log to history before deleting - FIXED: Access properties directly
+    // Convert to plain object to avoid TypeScript issues
+    const medicineData = medicine.toObject();
+    
+    // Log to history before deleting
     await MedicineHistory.create({
       medicineId: medicine._id,
-      medicineName: medicine.name, // Access directly from medicine
+      medicineName: medicineData.name,
       action: 'deleted',
-      details: `Removed ${medicine.name} from inventory`,
-      previousData: medicine.toObject() // Use toObject()
+      details: `Removed ${medicineData.name} from inventory`,
+      previousData: medicineData
     });
     
     await Medicine.findByIdAndDelete(req.params.id);
