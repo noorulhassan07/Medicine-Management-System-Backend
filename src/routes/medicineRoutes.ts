@@ -10,15 +10,14 @@ import {
 
 const router = express.Router();
 
-// =======================
-// 📦 Medicine Routes
-// =======================
-
 // Create new medicine
 router.post("/", createMedicine);
 
 // Get all medicines
 router.get("/", getMedicines);
+
+// ⭐ FIX: Put history BEFORE :id route
+router.get("/history", getHistory);
 
 // Get single medicine by ID
 router.get("/:id", getMedicineById);
@@ -28,8 +27,5 @@ router.put("/:id", updateMedicine);
 
 // Delete medicine by ID
 router.delete("/:id", deleteMedicine);
-
-// Get medicine history - CHANGE THIS LINE
-router.get("/history", getHistory); // Changed from "/history/all" to "/history"
 
 export default router;
