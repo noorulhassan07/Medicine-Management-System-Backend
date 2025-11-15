@@ -27,6 +27,8 @@ const medicineHistorySchema = new Schema<IMedicineHistory>({
   previousData: { type: Object },
   newData: { type: Object },
   timestamp: { type: Date, default: Date.now }
+}, {
+  collection: "medicinehistory" // ← ADD THIS LINE TO FIX COLLECTION NAME
 });
 
 export default mongoose.model<IMedicineHistory>("MedicineHistory", medicineHistorySchema);
