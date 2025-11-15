@@ -1,24 +1,21 @@
-import { Schema, model, Document } from 'mongoose';
+import mongoose from "mongoose";
 
-
-export interface IMedicine extends Document {
-name: string;
-quantity: number;
-manufacturingDate: Date;
-expiryDate: Date;
-dateOfEntry: Date;
-price: number;
-}
-
-
-const MedicineSchema = new Schema<IMedicine>({
-name: { type: String, required: true },
-quantity: { type: Number, required: true, default: 0 },
-manufacturingDate: { type: Date, required: true },
-expiryDate: { type: Date, required: true },
-dateOfEntry: { type: Date, required: true, default: () => new Date() },
-price: { type: Number, required: true, default: 0 }
+const medicineHistorySchema = new mongoose.Schema({
+  medicineId: { 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: "Medicine", 
+    required: true 
+  },
+  medicineName: { type: String, required: true },
+  action: { 
+    type: String, 
+    enum: ["created", "updated", "deleted", "sold"], 
+    required: true 
+  },
+  details: { type: String, required: true },
+  previousData: { type: Object },
+  newData: { type: Object },
+  timestamp: { type: Date, default: Date.now }
 });
 
-
-export default model<IMedicine>('Medicine', MedicineSchema);
+export default mongoose.model("MedicineHistory", medicineHistorySchema);
