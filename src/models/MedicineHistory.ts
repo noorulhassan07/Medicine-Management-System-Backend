@@ -1,11 +1,23 @@
-import mongoose from "mongoose";
+import mongoose, { Document, Schema } from "mongoose";
 
-const medicineHistorySchema = new mongoose.Schema({
+// Interface for MedicineHistory
+interface IMedicineHistory extends Document {
+  medicineId: mongoose.Types.ObjectId;
+  medicineName: string;
+  action: "created" | "updated" | "deleted" | "sold";
+  details: string;
+  previousData?: any;
+  newData?: any;
+  timestamp: Date;
+}
+
+const medicineHistorySchema = new Schema<IMedicineHistory>({
   medicineId: { 
-    type: mongoose.Schema.Types.ObjectId, 
+    type: Schema.Types.ObjectId, 
     ref: "Medicine", 
     required: true 
   },
+  medicineName: { type: String, required: true },
   action: { 
     type: String, 
     enum: ["created", "updated", "deleted", "sold"], 
@@ -17,4 +29,4 @@ const medicineHistorySchema = new mongoose.Schema({
   timestamp: { type: Date, default: Date.now }
 });
 
-export default mongoose.model("MedicineHistory", medicineHistorySchema);
+export default mongoose.model<IMedicineHistory>("MedicineHistory", medicineHistorySchema);
