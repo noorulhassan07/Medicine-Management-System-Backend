@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import mongoose from "mongoose"; // ADD THIS IMPORT
 import Sale from "../models/Sale";
 import Medicine from "../models/Medicine";
 import MedicineHistory from "../models/MedicineHistory";
@@ -8,8 +9,16 @@ export const recordSale = async (req: Request, res: Response) => {
   try {
     const { medicineId, quantitySold, salePrice, customerName } = req.body;
 
+    // Validate medicineId format
+    if (!mongoose.Types.ObjectId.isValid(medicineId)) {
+      return res.status(400).json({ error: "Invalid medicine ID format" });
+    }
+
+    // Convert medicineId string to ObjectId
+    const medicineObjectId = new mongoose.Types.ObjectId(medicineId);
+
     // Find the medicine
-    const medicine = await Medicine.findById(medicineId);
+    const medicine = await Medicine.findById(medicineObjectId);
     if (!medicine) {
       return res.status(404).json({ error: "Medicine not found" });
     }
@@ -27,7 +36,7 @@ export const recordSale = async (req: Request, res: Response) => {
 
     // Create sale record
     const sale = new Sale({
-      medicineId,
+      medicineId: medicineObjectId, // Use ObjectId here
       medicineName: medicine.name,
       quantitySold,
       salePrice,
@@ -56,6 +65,7 @@ export const recordSale = async (req: Request, res: Response) => {
       updatedMedicine: medicine
     });
   } catch (error) {
+    console.error("Error in recordSale:", error);
     res.status(500).json({ error: "Failed to record sale" });
   }
 };
@@ -73,7 +83,14 @@ export const getSales = async (req: Request, res: Response) => {
 // Get sales by medicine ID
 export const getSalesByMedicine = async (req: Request, res: Response) => {
   try {
-    const sales = await Sale.find({ medicineId: req.params.medicineId }).sort({ saleDate: -1 });
+    const { medicineId } = req.params;
+    
+    if (!mongoose.Types.ObjectId.isValid(medicineId)) {
+      return res.status(400).json({ error: "Invalid medicine ID format" });
+    }
+
+    const medicineObjectId = new mongoose.Types.ObjectId(medicineId);
+    const sales = await Sale.find({ medicineId: medicineObjectId }).sort({ saleDate: -1 });
     res.json(sales);
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch sales" });
