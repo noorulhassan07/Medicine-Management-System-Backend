@@ -1,7 +1,7 @@
 import mongoose, { Document, Schema } from "mongoose";
 
 // Interface for MedicineHistory
-interface IMedicineHistory extends Document {
+export interface IMedicineHistory extends Document {
   medicineId: mongoose.Types.ObjectId;
   medicineName: string;
   action: "created" | "updated" | "deleted" | "sold";
@@ -28,7 +28,9 @@ const medicineHistorySchema = new Schema<IMedicineHistory>({
   newData: { type: Object },
   timestamp: { type: Date, default: Date.now }
 }, {
-  collection: "medicinehistory" // ← ADD THIS LINE TO FIX COLLECTION NAME
+  collection: "medicinehistory"
 });
 
-export default mongoose.model<IMedicineHistory>("MedicineHistory", medicineHistorySchema);
+// Export both the model and interface
+const MedicineHistory = mongoose.model<IMedicineHistory>("MedicineHistory", medicineHistorySchema);
+export default MedicineHistory;
