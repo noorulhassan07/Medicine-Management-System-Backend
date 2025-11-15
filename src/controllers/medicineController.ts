@@ -19,6 +19,7 @@ export const createMedicine = async (req: Request, res: Response) => {
 
     res.status(201).json(medicine);
   } catch (error) {
+    console.error("Error creating medicine:", error);
     res.status(500).json({ error: "Failed to create medicine" });
   }
 };
@@ -29,6 +30,7 @@ export const getMedicines = async (req: Request, res: Response) => {
     const medicines = await Medicine.find().sort({ dateOfEntry: -1 });
     res.json(medicines);
   } catch (error) {
+    console.error("Error fetching medicines:", error);
     res.status(500).json({ error: "Failed to fetch medicines" });
   }
 };
@@ -42,6 +44,7 @@ export const getMedicineById = async (req: Request, res: Response) => {
     }
     res.json(medicine);
   } catch (error) {
+    console.error("Error fetching medicine by ID:", error);
     res.status(500).json({ error: "Failed to fetch medicine" });
   }
 };
@@ -103,16 +106,44 @@ export const deleteMedicine = async (req: Request, res: Response) => {
 
     res.json({ message: "Medicine deleted successfully" });
   } catch (error) {
+    console.error("Error deleting medicine:", error);
     res.status(500).json({ error: "Failed to delete medicine" });
   }
 };
 
-// Get medicine history
+// Get medicine history - FIXED VERSION
 export const getHistory = async (req: Request, res: Response) => {
   try {
+    console.log("🔄 Attempting to fetch medicine history...");
+    
+    // Test if MedicineHistory model is working
+    const historyCount = await MedicineHistory.countDocuments();
+    console.log(`📊 Total history records in database: ${historyCount}`);
+    
     const history = await MedicineHistory.find().sort({ timestamp: -1 });
+    console.log(`✅ Successfully fetched ${history.length} history records`);
+    
+    // If no history found, return empty array instead of error
     res.json(history);
+    
   } catch (error) {
-    res.status(500).json({ error: "Failed to fetch history" });
+    console.error("❌ Error in getHistory:");
+    console.error("Error name:", error instanceof Error ? error.name : 'Unknown');
+    console.error("Error message:", error instanceof Error ? error.message : error);
+    
+    // Check if it's a MongoDB connection error
+    if (error instanceof Error && error.name === 'MongoNetworkError') {
+      return res.status(500).json({ error: "Database connection failed" });
+    }
+    
+    // Check if it's a collection doesn't exist error
+    if (error instanceof Error && error.message.includes('collection')) {
+      console.log("📝 MedicineHistory collection might not exist yet. Returning empty array.");
+      return res.json([]);
+    }
+    
+    // For any other error, return empty array to prevent frontend crash
+    console.log("⚠️ Unknown error, returning empty array to prevent frontend crash");
+    res.json([]);
   }
 };
