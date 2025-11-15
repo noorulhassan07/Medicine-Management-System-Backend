@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import Medicine from "../models/Medicine";
-import MedicineHistory from "../models/MedicineHistory"; // We'll create this
+import MedicineHistory from "../models/MedicineHistory";
 
 // Get all medicines
 export const getMedicines = async (req: Request, res: Response) => {
@@ -21,8 +21,9 @@ export const createMedicine = async (req: Request, res: Response) => {
     // Log to history
     await MedicineHistory.create({
       medicineId: medicine._id,
+      medicineName: medicine.name,
       action: 'created',
-      details: `Added ${medicine.name} to inventory`,
+      details: `Added ${medicine.name} to inventory (Qty: ${medicine.quantity}, Price: ${medicine.price} PKR)`,
       newData: medicine
     });
     
@@ -48,6 +49,7 @@ export const updateMedicine = async (req: Request, res: Response) => {
     // Log to history
     await MedicineHistory.create({
       medicineId: medicine._id,
+      medicineName: medicine.name,
       action: 'updated',
       details: `Updated ${medicine.name}`,
       newData: medicine
@@ -71,6 +73,7 @@ export const deleteMedicine = async (req: Request, res: Response) => {
     // Log to history before deleting
     await MedicineHistory.create({
       medicineId: medicine._id,
+      medicineName: medicine.name,
       action: 'deleted',
       details: `Removed ${medicine.name} from inventory`,
       previousData: medicine
@@ -80,5 +83,15 @@ export const deleteMedicine = async (req: Request, res: Response) => {
     res.json({ message: "Medicine deleted successfully" });
   } catch (error) {
     res.status(500).json({ error: "Failed to delete medicine" });
+  }
+};
+
+// Get history
+export const getHistory = async (req: Request, res: Response) => {
+  try {
+    const history = await MedicineHistory.find().sort({ timestamp: -1 }).limit(50);
+    res.json(history);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch history" });
   }
 };
