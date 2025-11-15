@@ -5,8 +5,7 @@ import {
   updateMedicine,
   deleteMedicine,
   getHistory,
-  getMedicineById  // ADD THIS IMPORT
-
+  getMedicineById
 } from "../controllers/medicineController";
 
 const router = express.Router();
@@ -20,7 +19,10 @@ router.post("/", createMedicine);
 
 // Get all medicines
 router.get("/", getMedicines);
-router.get("/:id", getMedicineById);  // ADD THIS ROUTE
+
+// Get single medicine by ID
+router.get("/:id", getMedicineById);
+
 // Update existing medicine by ID
 router.put("/:id", updateMedicine);
 
@@ -28,6 +30,6 @@ router.put("/:id", updateMedicine);
 router.delete("/:id", deleteMedicine);
 
 // Get medicine history
-router.get("/history", getHistory);
+router.get("/history/all", getHistory);
 
 export default router;
