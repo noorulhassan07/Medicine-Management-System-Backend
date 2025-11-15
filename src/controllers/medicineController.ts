@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import Medicine from "../models/Medicine";
 import MedicineHistory from "../models/MedicineHistory";
-
 // Create new medicine
 export const createMedicine = async (req: Request, res: Response) => {
   try {
