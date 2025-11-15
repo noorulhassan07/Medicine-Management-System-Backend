@@ -3,8 +3,8 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import morgan from 'morgan';
 import connectDB from './config/db';
-import medicineRoutes from './routes/medicineRoutes'; // Make sure this line exists
-import saleRoutes from './routes/saleRoutes';  // ADD THIS IMPORT
+import medicineRoutes from './routes/medicineRoutes';
+import saleRoutes from './routes/saleRoutes';  // This import exists but not used
 
 dotenv.config();
 
@@ -16,8 +16,9 @@ app.use(cors());
 app.use(express.json());
 app.use(morgan('dev'));
 
-// Routes - MAKE SURE THIS LINE EXISTS
+// Routes
 app.use('/api/medicines', medicineRoutes);
+app.use('/api/sales', saleRoutes); // ADD THIS LINE - THIS IS MISSING!
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
