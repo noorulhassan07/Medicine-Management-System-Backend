@@ -18,13 +18,13 @@ export const createMedicine = async (req: Request, res: Response) => {
     const medicine = new Medicine(req.body);
     await medicine.save();
     
-    // Log to history
+    // Log to history - FIXED: Access properties directly from medicine object
     await MedicineHistory.create({
       medicineId: medicine._id,
-      medicineName: medicine.name,
+      medicineName: medicine.name, // Access directly from medicine
       action: 'created',
       details: `Added ${medicine.name} to inventory (Qty: ${medicine.quantity}, Price: ${medicine.price} PKR)`,
-      newData: medicine
+      newData: medicine.toObject() // Use toObject() to get plain JavaScript object
     });
     
     res.status(201).json(medicine);
@@ -46,13 +46,13 @@ export const updateMedicine = async (req: Request, res: Response) => {
       return res.status(404).json({ error: "Medicine not found" });
     }
     
-    // Log to history
+    // Log to history - FIXED: Access properties directly
     await MedicineHistory.create({
       medicineId: medicine._id,
-      medicineName: medicine.name,
+      medicineName: medicine.name, // Access directly from medicine
       action: 'updated',
       details: `Updated ${medicine.name}`,
-      newData: medicine
+      newData: medicine.toObject() // Use toObject()
     });
     
     res.json(medicine);
@@ -70,13 +70,13 @@ export const deleteMedicine = async (req: Request, res: Response) => {
       return res.status(404).json({ error: "Medicine not found" });
     }
     
-    // Log to history before deleting
+    // Log to history before deleting - FIXED: Access properties directly
     await MedicineHistory.create({
       medicineId: medicine._id,
-      medicineName: medicine.name,
+      medicineName: medicine.name, // Access directly from medicine
       action: 'deleted',
       details: `Removed ${medicine.name} from inventory`,
-      previousData: medicine
+      previousData: medicine.toObject() // Use toObject()
     });
     
     await Medicine.findByIdAndDelete(req.params.id);
