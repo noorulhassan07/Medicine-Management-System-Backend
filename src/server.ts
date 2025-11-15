@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import morgan from 'morgan';
 import connectDB from './config/db';
-import medicineRoutes from './routes/medicineRoutes';
+import medicineRoutes from './routes/medicineRoutes'; // Make sure this line exists
 
 dotenv.config();
 
@@ -15,35 +15,29 @@ app.use(cors());
 app.use(express.json());
 app.use(morgan('dev'));
 
-// Routes
+// Routes - MAKE SURE THIS LINE EXISTS
 app.use('/api/medicines', medicineRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
   res.json({ 
-    status: 'ok', 
-    message: 'Medicine backend running',
-    database: 'Connected'
+    status: 'OK', 
+    message: 'Medicine Management System API is running',
+    timestamp: new Date().toISOString()
   });
 });
 
-// Root
+// Root endpoint
 app.get('/', (req, res) => {
   res.json({ 
-    status: 'ok', 
     message: 'Medicine Management System Backend',
     version: '1.0.0'
   });
 });
 
-// Start server after DB connected
-connectDB()
-.then(() => {
-  app.listen(PORT, () => {
-    console.log(`🚀 Server listening on port ${PORT}`);
-  });
-})
-.catch((err) => {
-  console.error('Failed to connect to DB', err);
-  process.exit(1);
+// Database connection
+connectDB();
+
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
 });
