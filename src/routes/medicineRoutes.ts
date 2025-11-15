@@ -29,7 +29,7 @@ router.put("/:id", updateMedicine);
 // Delete medicine by ID
 router.delete("/:id", deleteMedicine);
 
-// Get medicine history
-router.get("/history/all", getHistory);
+// Get medicine history - CHANGE THIS LINE
+router.get("/history", getHistory); // Changed from "/history/all" to "/history"
 
 export default router;
