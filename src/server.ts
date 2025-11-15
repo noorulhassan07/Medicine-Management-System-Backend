@@ -4,6 +4,7 @@ import cors from 'cors';
 import morgan from 'morgan';
 import connectDB from './config/db';
 import medicineRoutes from './routes/medicineRoutes'; // Make sure this line exists
+import saleRoutes from './routes/saleRoutes';  // ADD THIS IMPORT
 
 dotenv.config();
 
